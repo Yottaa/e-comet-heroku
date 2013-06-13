@@ -1,0 +1,9 @@
+*.iml
+*.ipr
+*.iws
+.idea/
+
+addon-manifest.json
+.env
+
+custom-build.properties
