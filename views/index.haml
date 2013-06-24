@@ -4,7 +4,18 @@
   %body
     = Heroku::Nav::Provider.html
     %p Hello!
-    %p You are using resource: #{@resource[:id]}.
+    %p You are using Yottaa resource: #{@resource[:id]}.
     %p Located in: #{@resource[:region]}.
     %p On plan: #{@resource[:plan]}
+    %p Your yottaa settings are
+    %table
+      %tr
+        %td User ID
+        %td #{ENV['YOTTAA_USER_ID']}
+      %tr
+        %td Site ID
+        %td #{ENV['YOTTAA_SITE_ID']}
+      %tr
+        %td API Key
+        %td #{ENV['YOTTAA_API_KEY']}
     %p Logged in as: #{@email}
