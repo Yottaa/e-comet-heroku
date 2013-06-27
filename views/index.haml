@@ -1,21 +1,103 @@
 !!!
+%link(rel="stylesheet" type="text/css" href="yottaa.css")
 %html
   %head
   %body
     = Heroku::Nav::Provider.html
-    %p Hello!
-    %p You are using Yottaa resource: #{@resource[:id]}.
-    %p Located in: #{@resource[:region]}.
-    %p On plan: #{@resource[:plan]}
-    %p Your yottaa settings are
-    %table
-      %tr
-        %td User ID
-        %td #{ENV['YOTTAA_USER_ID']}
-      %tr
-        %td Site ID
-        %td #{ENV['YOTTAA_SITE_ID']}
-      %tr
-        %td API Key
-        %td #{ENV['YOTTAA_API_KEY']}
-    %p Logged in as: #{@email}
+    %div{:class=>"dashboard"}
+      -if !@message.to_s.empty?
+        %div{:id=>"console", :class=>"clearfix"}
+          %div{:class=>"messages status"}
+            %h2{:class=>"element-invisible"} Status message
+            #{@message}
+      -if !@error.to_s.empty?
+        %div{:id=>"console", :class=>"clearfix"}
+          %div{:class=>"messages error"}
+            %h2{:class=>"element-invisible"} Status message
+            #{@error}
+      %h1 <img src="images/yottaa.png"/> My Yottaa Page
+      -if @status == 'preview'
+        %p Your site is currently in <span class="status-preview">Preview</span>.
+        %p This allows you to access an optimized version of your website using <a href="#{@resource['preview_url']}" target="_blank">the preview URL</a>. Before making your site live look over the links and configuration below.
+      -elsif @status == 'live'
+        %p Your site is currently in <span class="status-live">Live</span>.
+      -elsif @status == 'bypass'
+        %p Your site is currently in <span class="status-paused">Bypass mode</span>.
+      -elsif @status == 'transparent proxy'
+        %p Your site is currently in <span class="status-paused">Transparent Proxy mode</span>.
+      -else
+      %h2 Links
+      %div
+        %a{:class =>"",:href => "https://apps.yottaa.com/", :target=>"_blank", :title => "Yottaa Dashboard"} Yottaa Dashboard
+      %div
+        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}/optimizer", :target=>"_blank", :title => "Yottaa Site Overview"} Yottaa Site Overview
+      %div
+        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}/settings", :target=>"_blank", :title => "Yottaa Optimization Configuration"} Yottaa Optimization Configuration
+      %h2 Actions
+      %h3 Switch Optimizer Mode
+      -if @status == 'preview'
+        %table.status
+          %tr
+            %td
+              %a{:class=>"button", :href=>"https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}", :target=>"_blank"} Activate Optimizations
+            %td
+              Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
+      -elsif @status == 'live'
+        %form{:id=>"yottaa-optimizer-bypass-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/bypass"}
+          %div
+            %table.status
+              %tr{:class=>"odd"}
+                %td
+                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Bypass", :name=>"action"}
+                %td
+                  In Bypass Mode, Yottaa DNS will route all traffic to your origin server directly, by-passing optimizations, SSL termination and origin server shielding etc. Your origin servers IP address are visible to anyone in this mode.
+        %form{:id=>"yottaa-optimizer-transparent-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/transparent"}
+          %div
+            %table.status
+              %tr{:class=>"odd"}
+                %td
+                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Transparent Proxy", :name=>"action"}
+                %td
+                  In Transparent Proxy Mode, Yottaa will proxy your site traffic through the Yottaa Network without applying any optimization. Other features such as SSL termination, site protection and Private Test are in effect as usual. Your origin servers IP address are shielded by Yottaa.
+      -elsif @status == 'bypass' ||  @status == 'transparent proxy'
+        %form{:id=>"yottaa-optimizer-resume-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/resume"}
+          %div
+            %table.status
+              %tr{:class=>"odd"}
+                %td
+                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Resume", :name=>"action"}
+                %td
+                  Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
+      -else
+      %h3 Other Actions
+      %form{:id=>"yottaa-optimizer-flush-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/flush"}
+        %div
+          %table.others
+            %tr{:class=>"odd"}
+              %td{:class=>"form-paths"}
+                Clearing the cache will remove all of your sites resources from our CDN. Use this option if you have updated a resource (gif, css, JavaScript).
+            %tr{:class=>"odd"}
+              %td
+                %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Flush Cache", :name=>"action"}
+      %form{:id=>"yottaa-optimizer-purge-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/purge"}
+        %div
+          %table
+            %tr{:class=>"odd"}
+              %td{:colspan=>"2"}
+                %textarea{:id=>"paths", :class=>"form-paths", :name=>"paths"}
+                %div Purge cache based on entered regular expressions (one regular expression for each line).
+            %tr{:class=>"even"}
+              %td
+                %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Purge Cache", :name=>"action"}
+              %td
+      %h2 Yottaa Settings
+      %table
+        %tr
+          %td <span class="setting-item-title">User Id</span>
+          %td #{ENV['YOTTAA_USER_ID']}
+        %tr
+          %td <span class="setting-item-title">Site Id</span>
+          %td #{ENV['YOTTAA_SITE_ID']}
+        %tr
+          %td <span class="setting-item-title">API Key</span>
+          %td #{ENV['YOTTAA_API_KEY']}

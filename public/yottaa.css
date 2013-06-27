@@ -1,0 +1,225 @@
+body {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #000000;
+    font: 81.3%/1.538em "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+}
+
+a {
+    color: #0074BD;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    background: none repeat scroll 0 0 #CCCCCC;
+    border: medium none;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+h1 {
+    font-size: 1.538em;
+}
+
+h2 {
+    font-size: 1.385em;
+}
+
+h3 {
+    font-size: 1.231em;
+}
+
+h4 {
+    font-size: 1.154em;
+}
+
+h5, h6 {
+    font-size: 1.077em;
+}
+
+p {
+    margin: 1em 0;
+}
+
+.clear-block #center form {
+    margin-bottom: 0;
+}
+
+.clear-block h3 {
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+h1 img {
+    height: 32px;
+    width: 120px;
+    float: right;
+}
+
+input.form-submit, a.button {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("images/buttons.png") repeat-x scroll 0 0 transparent;
+    border-color: #E4E4E4 #D2D2D2 #B4B4B4;
+    border-image: none;
+    border-radius: 20px 20px 20px 20px;
+    border-style: solid;
+    border-width: 1px;
+    color: #5A5A5A;
+    cursor: pointer;
+    font-family: "Lucida Grande", Verdana, sans-serif;
+    font-size: 1.077em;
+    font-weight: normal;
+    margin-right: 1em;
+    padding: 4px 17px;
+    text-align: center;
+}
+
+a.button:link, a.button:visited, a.button:hover, a.button:active {
+    color: #5A5A5A;
+    text-decoration: none;
+}
+
+.dashboard {
+    margin: 15px;
+}
+
+.status-preview {
+    color: orange;
+    font-weight: bold
+}
+
+.status-live {
+    color: green;
+    font-weight: bold
+}
+
+.status-paused, .status-error {
+    color: red;
+    font-weight: bold
+}
+
+span.setting-item-title {
+    font-weight: bold;
+}
+
+table, table tr, table tr td {
+    border: none;
+}
+
+input.form-submit {
+    width: 175px;
+}
+
+table.staus:first-child tr:first-child td:first-child {
+    width: 200px;
+}
+
+.setting span.checklist-item-title, .checklist-item span.checklist-item-title {
+    display: inline-block;
+    width: 300px;
+    font-weight: bold;
+}
+
+.checklist-item-status-passed {
+    color: green;
+}
+
+.checklist-item-status-failed {
+    color: red;
+}
+
+ul.links:after, div.admin-panel .body:after, .clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+#console {
+    margin: 9px 0 10px;
+}
+
+div.status, table tr.ok {
+    background-color: #F8FFF0;
+}
+
+div.status, .ok {
+    color: #234600;
+}
+
+div.status {
+    background-image: url("images/message-24-ok.png");
+    border-color: #BBEE77;
+}
+
+div.messages {
+    background-position: 8px 8px;
+    background-repeat: no-repeat;
+    border: 1px solid;
+    margin: 6px 0;
+    padding: 10px 10px 10px 50px;
+}
+
+div.error {
+    background-image: url("images/message-24-error.png");
+    border-color: #ED541D;
+}
+
+div.error, .error {
+    color: #8C2E0B;
+}
+
+div.error, table tr.error {
+    background-color: #FEF5F1;
+}
+
+.element-invisible {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute !important;
+}
+
+textarea.form-paths {
+    width: 960px;
+    height: 100px;
+}
+
+tr td.form-paths {
+    width: 960px;
+}
+
+table.others {
+    margin-bottom: 15px;
+}
+
+table.status, table.others {
+    width: 960px;
+}
+
+

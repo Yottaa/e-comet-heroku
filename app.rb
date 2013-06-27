@@ -22,10 +22,14 @@ end
 class App < Sinatra::Base
   use Rack::Session::Cookie, secret: ENV['SSO_SALT']
 
-  YOTTAA_API_URL_ROOT = "https://api-dev.yottaa.com"
+  #YOTTAA_API_URL_ROOT = "https://api-dev.yottaa.com"
+  YOTTAA_API_URL_ROOT = "https://api.yottaa.com"
 
-  YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'39e8b9b0b1000130d279123138106137'}
-  YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/51b0cd1bebe2bb3069000f0d"
+  #YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'39e8b9b0b1000130d279123138106137'}
+  #YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/51b0cd1bebe2bb3069000f0d"
+
+  YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'455df7500258012f663b12313d145ceb'}
+  YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/4d34f75b74b1553ba500007f"
 
   helpers do
     def protected!
@@ -88,10 +92,18 @@ class App < Sinatra::Base
 
   # sso landing page
   get "/" do
-    halt 403, 'not logged in' unless session[:heroku_sso]
+    #hack- halt 403, 'not logged in' unless session[:heroku_sso]
     #response.set_cookie('heroku-nav-data', value: session[:heroku_sso])
     @resource = session[:resource]
-    @email    = session[:email]
+    #hack- @email    = session[:email]
+    STDOUT.puts session[:resource].to_json
+    @email    = 'yong.qu@yottaa.com'
+    @status = session[:resource]['optimizer']
+
+    @message = session[:message]
+    @error = session[:error]
+    session[:message] = ''
+    session[:error] = ''
     haml :index
   end
 
@@ -99,10 +111,12 @@ class App < Sinatra::Base
     STDOUT.puts ENV['SSO_SALT']
     STDOUT.puts params[:id]
     STDOUT.puts params[:timestamp]
-    pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + params[:timestamp]
+    timenow = (Time.now).to_i.to_s
+    #hack- pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + params[:timestamp]
+    pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + timenow
     token = Digest::SHA1.hexdigest(pre_token).to_s
-    halt 403 if token != params[:token]
-    halt 403 if params[:timestamp].to_i < (Time.now - 2*60).to_i
+    #hack- halt 403 if token != params[:token]
+    #hack- halt 403 if params[:timestamp].to_i < (Time.now - 2*60).to_i
 
     halt 404 unless session[:resource]   = get_resource
 
@@ -240,4 +254,97 @@ class App < Sinatra::Base
     plan = json_body['plan']
     {}.to_json
   end
+
+  post "/bypass" do
+    uri = URI.parse(YOTTAA_API_URL_ROOT + "/optimizers/" + ENV["YOTTAA_SITE_ID"] +"/bypass")
+    https = https_connection(uri)
+    req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>ENV["YOTTAA_API_KEY"]})
+    req.set_form_data({"user_id" => ENV["YOTTAA_USER_ID"]})
+    https.set_debug_output($stdout)
+    res = https.request(req)
+    result = JSON.parse(res.body)
+
+    if !result.has_key? 'error'
+      session[:message] = 'Your Yottaa optimizer has been changed to bypass mode.'
+    else
+      session[:error] = 'Error received from changing Yottaa optimizer to bypass mode:' + result["error"].to_json
+    end
+    redirect '/heroku/resources/' + ENV["YOTTAA_SITE_ID"]
+  end
+
+  post "/transparent" do
+    uri = URI.parse(YOTTAA_API_URL_ROOT + "/optimizers/" + ENV["YOTTAA_SITE_ID"] +"/transparent")
+    https = https_connection(uri)
+    req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>ENV["YOTTAA_API_KEY"]})
+    req.set_form_data({"user_id" => ENV["YOTTAA_USER_ID"]})
+    https.set_debug_output($stdout)
+    res = https.request(req)
+    result = JSON.parse(res.body)
+
+    if !result.has_key? 'error'
+      session[:message] = 'Your Yottaa optimizer has been changed to transparent proxy mode.'
+    else
+      session[:error] = 'Error received from changing Yottaa optimizer to transparent proxy mode:' + result["error"].to_json
+    end
+    redirect '/heroku/resources/' + ENV["YOTTAA_SITE_ID"]
+  end
+
+  post "/resume" do
+    uri = URI.parse(YOTTAA_API_URL_ROOT + "/optimizers/" + ENV["YOTTAA_SITE_ID"] +"/resume")
+    https = https_connection(uri)
+    req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>ENV["YOTTAA_API_KEY"]})
+    req.set_form_data({"user_id" => ENV["YOTTAA_USER_ID"]})
+    https.set_debug_output($stdout)
+    res = https.request(req)
+    result = JSON.parse(res.body)
+
+    if !result.has_key? 'error'
+      session[:message] = 'Your Yottaa optimizer has been resumed.'
+    else
+      session[:error] = 'Error received from resuming Yottaa optimizer:' + result["error"].to_json
+    end
+    redirect '/heroku/resources/' + ENV["YOTTAA_SITE_ID"]
+  end
+
+  post "/flush" do
+    uri = URI.parse(YOTTAA_API_URL_ROOT + "/sites/" + ENV["YOTTAA_SITE_ID"] +"/flush_cache")
+    https = https_connection(uri)
+    req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>ENV["YOTTAA_API_KEY"]})
+    req.set_form_data({"user_id" => ENV["YOTTAA_USER_ID"]})
+    https.set_debug_output($stdout)
+    res = https.request(req)
+    result = JSON.parse(res.body)
+
+    if !(result.has_key? 'error_response') && !(result.has_key? 'error')
+      session[:message] = 'Cache for all of your sites resources has been removed from Yottaa CDN.'
+    else
+      error = result["error"].nil? ? result["error_response"] : result["error"]
+      session[:error] = 'Error received from flushing Yottaa optimizer cache:' + error.to_json
+    end
+    redirect '/heroku/resources/' + ENV["YOTTAA_SITE_ID"]
+  end
+
+  post "/purge" do
+    paths = params[:paths]
+    path_configs = []
+    paths.split(/\r\n/).each do |path|
+      path_configs.push({:condition => path, :name => "URI", :operator => "REGEX", :type => "html"})
+    end
+    uri = URI.parse(YOTTAA_API_URL_ROOT + "/sites/" + ENV["YOTTAA_SITE_ID"] +"/purge_cache?user_id=" + ENV["YOTTAA_USER_ID"])
+    https = https_connection(uri)
+    req = Net::HTTP::Post.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>ENV["YOTTAA_API_KEY"]})
+    req.body = path_configs.to_json
+    https.set_debug_output($stdout)
+    res = https.request(req)
+    result = JSON.parse(res.body)
+
+    if !(result.has_key? 'error_response') && !(result.has_key? 'error')
+      session[:message] = 'Cache for given regular expressions has been removed from Yottaa CDN.'
+    else
+      error = result["error"].nil? ? result["error_response"] : result["error"]
+      session[:error] = 'Error received from purging Yottaa optimizer cache:' + error.to_json
+    end
+    redirect '/heroku/resources/' + ENV["YOTTAA_SITE_ID"]
+  end
+
 end
