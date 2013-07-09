@@ -22,12 +22,13 @@ end
 class App < Sinatra::Base
   use Rack::Session::Cookie, secret: ENV['SSO_SALT']
 
+  # Dev settings
   #YOTTAA_API_URL_ROOT = "https://api-dev.yottaa.com"
-  YOTTAA_API_URL_ROOT = "https://api.yottaa.com"
-
   #YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'39e8b9b0b1000130d279123138106137'}
   #YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/51b0cd1bebe2bb3069000f0d"
 
+  # Production settings
+  YOTTAA_API_URL_ROOT = "https://api.yottaa.com"
   YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'455df7500258012f663b12313d145ceb'}
   YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/4d34f75b74b1553ba500007f"
 
@@ -92,12 +93,22 @@ class App < Sinatra::Base
 
   # sso landing page
   get "/" do
-    #hack- halt 403, 'not logged in' unless session[:heroku_sso]
-    #response.set_cookie('heroku-nav-data', value: session[:heroku_sso])
+=begin
     @resource = session[:resource]
-    #hack- @email    = session[:email]
     STDOUT.puts session[:resource].to_json
     @email    = 'yong.qu@yottaa.com'
+    @status = session[:resource]['optimizer']
+
+    @message = session[:message]
+    @error = session[:error]
+    session[:message] = ''
+    session[:error] = ''
+    haml :index
+=end
+    halt 403, 'not logged in' unless session[:heroku_sso]
+    response.set_cookie('heroku-nav-data', value: session[:heroku_sso])
+    @resource = session[:resource]
+    @email    = session[:email]
     @status = session[:resource]['optimizer']
 
     @message = session[:message]
@@ -108,15 +119,30 @@ class App < Sinatra::Base
   end
 
   def sso
+=begin
+    ENV['SSO_SALT']='397dd6c5432b87ff3b1301a286705a18'
+    ENV['HEROKU_USERNAME']='yottaa'
+    ENV['HEROKU_PASSWORD']='98df4e304ad4bf26f3c379ecfb5a70b3'
+    ENV['YOTTAA_SITE_ID']='50e1b0577a6c875a62000d86'
+    ENV['YOTTAA_USER_ID']='50e1b0577a6c875a62000d85'
+    ENV['YOTTAA_API_KEY']='63d53430358d01304a4e1231381b6709'
+
     STDOUT.puts ENV['SSO_SALT']
     STDOUT.puts params[:id]
     STDOUT.puts params[:timestamp]
     timenow = (Time.now).to_i.to_s
-    #hack- pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + params[:timestamp]
     pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + timenow
     token = Digest::SHA1.hexdigest(pre_token).to_s
-    #hack- halt 403 if token != params[:token]
-    #hack- halt 403 if params[:timestamp].to_i < (Time.now - 2*60).to_i
+    halt 404 unless session[:resource]   = get_resource
+    response.set_cookie('heroku-nav-data', value: params['nav-data'])
+    session[:heroku_sso] = params['nav-data']
+    session[:email]      = params[:email]
+    redirect '/'
+=end
+    pre_token = params[:id] + ':' + ENV['SSO_SALT'] + ':' + params[:timestamp]
+    token = Digest::SHA1.hexdigest(pre_token).to_s
+    halt 403 if token != params[:token]
+    halt 403 if params[:timestamp].to_i < (Time.now - 2*60).to_i
 
     halt 404 unless session[:resource]   = get_resource
 
