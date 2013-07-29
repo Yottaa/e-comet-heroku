@@ -20,7 +20,7 @@ class CaseSensitiveString < String
 end
 
 STDOUT.puts "Retrieve list of sites you have registerd with Yottaa."
-uri = URI.parse("https://api-dev.yottaa.com/sites")
+uri = URI.parse("https://api.yottaa.com/sites/" + ENV['YOTTAA_SITE_ID'])
 
 https = Net::HTTP.new(uri.host, uri.port)
 https.use_ssl = true
