@@ -30,16 +30,16 @@
       %div
         %a{:class =>"",:href => "https://apps.yottaa.com/", :target=>"_blank", :title => "Yottaa Dashboard"} Yottaa Dashboard
       %div
-        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}/optimizer", :target=>"_blank", :title => "Yottaa Site Overview"} Yottaa Site Overview
+        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{@site_id}/optimizer", :target=>"_blank", :title => "Yottaa Site Overview"} Yottaa Site Overview
       %div
-        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}/settings", :target=>"_blank", :title => "Yottaa Optimization Configuration"} Yottaa Optimization Configuration
+        %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{@site_id}/settings", :target=>"_blank", :title => "Yottaa Optimization Configuration"} Yottaa Optimization Configuration
       %h2 Actions
       %h3 Switch Optimizer Mode
       -if @status == 'preview'
         %table.status
           %tr
             %td
-              %a{:class=>"button", :href=>"https://apps.yottaa.com/framework/web/sites/#{ENV['YOTTAA_SITE_ID']}", :target=>"_blank"} Activate Optimizations
+              %a{:class=>"button", :href=>"https://apps.yottaa.com/framework/web/sites/#{@site_id}", :target=>"_blank"} Activate Optimizations
             %td
               Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
       -elsif @status == 'live'
@@ -94,10 +94,10 @@
       %table
         %tr
           %td <span class="setting-item-title">User Id</span>
-          %td #{ENV['YOTTAA_USER_ID']}
+          %td #{@user_id}
         %tr
           %td <span class="setting-item-title">Site Id</span>
-          %td #{ENV['YOTTAA_SITE_ID']}
+          %td #{@site_id}
         %tr
           %td <span class="setting-item-title">API Key</span>
-          %td #{ENV['YOTTAA_API_KEY']}
+          %td #{@api_key}
