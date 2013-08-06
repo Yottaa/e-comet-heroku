@@ -91,7 +91,7 @@ Adding heroku.bestwebsitemonitoring.info to yottaa-heroku-app... done
 2. Configure your application’s DNS to point to Heroku e.g. adding a CNAME record pointing the subdomain to your app’s Heroku herokuapp.com hostname.
 
 | Record        | Name          | Target  |
-| ------------- |:-------------:| -------:|
+| ------------- |:-------------:|:-------:|
 | `CNAME`       | heroku.bestwebsitemonitoring.info | yottaa-heroku-app.herokuapp.com |
 
 For more information on setting up Heroku custom domains, please refer to [this document](https://devcenter.heroku.com/articles/custom-domains).
@@ -100,11 +100,11 @@ For more information on setting up Heroku custom domains, please refer to [this 
 
 Once you configure your custom domain for your Heroku app, next step will be activating your Yottaa account that you have signed up or registered through the Heroku command line.
 
-1. First, locate your site's Yottaa CNAME by logging in [Yottaa Apps Console](http://apps.yottaa.com) and picking your site.
+1. First, locate your site's Yottaa CNAME by logging in [Yottaa Apps Console](http://apps.yottaa.com) and browsing to your site dashboard.
 2. Then modify the `CNAME` record you just created for your Heroku App with the Yotaa CNAME.
 
 | Record        | Name          | Target  |
-| ------------- |:-------------:| -------:|
+| ------------- |:-------------:|:-------:|
 | `CNAME`       | heroku.bestwebsitemonitoring.info | 72620360de5d013012371231381401ec.yottaa.net |
 
 
@@ -112,17 +112,12 @@ Once you configure your custom domain for your Heroku app, next step will be act
 
 ### Environment setup
 
-[[If running against the add-on service during development is not applicable this section can be omitted]]
-
 After provisioning the add-on it’s necessary to locally replicate the config vars so your development environment can operate against the service.
 
-> callout
-> Though less portable it’s also possible to set local environment variables using `export ADDON-CONFIG-NAME=value`.
-
-Use [Foreman](config-vars#local-setup) to configure, run and manage process types specified in your app’s [Procfile](procfile). Foreman reads configuration variables from an .env file. Use the following command to add the ADDON-CONFIG-NAME values retrieved from heroku config to `.env`.
+Use [Foreman](config-vars#local-setup) to configure, run and manage process types specified in your app’s [Procfile](procfile). Foreman reads configuration variables from an .env file. Use the following command to add the Yottaa config values retrieved from heroku config to `.env`.
 
 ```term
-$ heroku config -s | grep ADDON-CONFIG-NAME >> .env
+$ heroku config -s | grep YOTTAA >> .env
 $ more .env
 ```
 
