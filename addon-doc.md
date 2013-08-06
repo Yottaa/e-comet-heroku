@@ -15,7 +15,7 @@ Minimize client-side processing and optimize above-the-fold rendering to provide
 ##### Integrated Security
 Guarantee resource elasticity to scale for traffic spikes so your success does not result in unexpected downtime or damage to your brand. Block unwanted and throttle low-priority traffic to ensure your target visitors have the end user experience they demand.
 
-Yottaa is accessible via an API and has supported client libraries for [Java](#using-with-java)|[Ruby](#using-with-ruby-on-rails).
+Yottaa is accessible via an API and has supported client libraries for [Java](#using-with-java) | [Ruby](#using-with-ruby-on-rails).
 
 ## Provisioning the add-on
 
@@ -83,16 +83,23 @@ In general, you will need to take two steps
 
 1. Tell Heroku which custom domains are specific to your application
 
-```term
-$ heroku domains:add heroku.bestwebsitemonitoring.info
-Adding heroku.bestwebsitemonitoring.info to yottaa-heroku-app... done
-```
-
+    ```term
+    $ heroku domains:add heroku.bestwebsitemonitoring.info
+    Adding heroku.bestwebsitemonitoring.info to yottaa-heroku-app... done
+    ```
 2. Configure your application’s DNS to point to Heroku e.g. adding a CNAME record pointing the subdomain to your app’s Heroku herokuapp.com hostname.
-
-| Record        | Name          | Target  |
-| ------------- |:-------------:|:-------:|
-| `CNAME`       | heroku.bestwebsitemonitoring.info | yottaa-heroku-app.herokuapp.com |
+<table>
+  <tr>
+    <th>Record.</th>
+    <th>Name</th>
+    <th>Target</th>
+  </tr>
+  <tr>
+    <td><code>CNAME</code></td>
+    <td style="text-align: left"><code>heroku.bestwebsitemonitoring.info</code></td>
+    <td style="text-align: left"><code>yottaa-heroku-app.herokuapp.com</code></td>
+  </tr>
+</table>
 
 For more information on setting up Heroku custom domains, please refer to [this document](https://devcenter.heroku.com/articles/custom-domains).
 
@@ -103,10 +110,18 @@ Once you configure your custom domain for your Heroku app, next step will be act
 1. First, locate your site's Yottaa CNAME by logging in [Yottaa Apps Console](http://apps.yottaa.com) and browsing to your site dashboard.
 2. Then modify the `CNAME` record you just created for your Heroku App with the Yotaa CNAME.
 
-| Record        | Name          | Target  |
-| ------------- |:-------------:|:-------:|
-| `CNAME`       | heroku.bestwebsitemonitoring.info | 72620360de5d013012371231381401ec.yottaa.net |
-
+<table>
+  <tr>
+    <th>Record.</th>
+    <th>Name</th>
+    <th>Target</th>
+  </tr>
+  <tr>
+    <td><code>CNAME</code></td>
+    <td style="text-align: left"><code>heroku.bestwebsitemonitoring.info</code></td>
+    <td style="text-align: left"><code>72620360de5d013012371231381401ec.yottaa.net</code></td>
+  </tr>
+</table>
 
 ## Local setup
 
