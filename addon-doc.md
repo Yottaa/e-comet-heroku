@@ -1,20 +1,19 @@
 [Yottaa](http://addons.heroku.com/yottaa) is an [add-on](http://addons.heroku.com) for web and mobile optimization, CDN, DNS and Firewall with integrated monitoring.
 
-### Datacenter Optimization
+##### Datacenter Optimization
 Accelerate server-side performance and eliminate latency with powerful content optimization. Yottaa enables everything from push-button acceleration to robust server-side content optimizations, without the complexity and people-hours required by individual or DIY solutions
 
-### Middle Mile Optimization (CDN)
+##### Middle Mile Optimization (CDN)
 Accelerate content delivery with cutting-edge CDN federation technology, leveraging a hybrid architecture of physical and cloud datacenters to ensure the most efficient and resilient network architecture possible.
 
-### Content Optimization (Last Mile)
+##### Content Optimization (Last Mile)
 Reduce payload, minimize round trip requests, and apply network optimizations to deliver the right content to the right device – right on time
 
-### iphone Device & Browser Optimization
+##### Device & Browser Optimization
 Minimize client-side processing and optimize above-the-fold rendering to provide the best end user experience across all devices: desktops, tablets and phones
 
-## shieldoutline Integrated Security
+##### Integrated Security
 Guarantee resource elasticity to scale for traffic spikes so your success does not result in unexpected downtime or damage to your brand. Block unwanted and throttle low-priority traffic to ensure your target visitors have the end user experience they demand.
-
 
 Yottaa is accessible via an API and has supported client libraries for [[Java|Ruby|Python|Node.js|Clojure|Scala]]*.
 
@@ -22,8 +21,11 @@ Yottaa is accessible via an API and has supported client libraries for [[Java|Ru
 
 Yottaa can be attached to a Heroku application via the  CLI:
 
-> callout
 > A list of all plans available can be found [here](http://addons.heroku.com/yottaa).
+
+### Sign up a new Yottaa account
+
+To provision a new Yottaa account for your site, you can run the heroku addons command with optional parameters, `first_name`, `last_name`, `email`, and `site`.
 
 ```term
 $ heroku addons:add yottaa --first_name=John --last_name=Smith --email=john.smith@yottaa.com --phone=123456789 --site=http://www.yoursite.com
@@ -31,20 +33,34 @@ Dear John Smith, your Yottaa account is now provisioned!
 Use `heroku addons:docs yottaa:free` to view documentation.
 ```
 
-Once Yottaa has been added three custom settings, `YOTTAA_API_KEY`, `YOTTAA_SITE_ID` and `YOTTAA_USER_ID` will be available in the app configuration.
+Although parameters are optional, it is highly recommended to provide all of them.
 
 
+### Register an Existing Yottaa account
 
+If you already have a Yottaa account and added your site through Yottaa apps console, you can provision your Yottaa add-on using `user_id`, `api_key` and `site_id` parameters.
+
+```term
+$ heroku addons:add yottaa --user_id=51fcf311ea2e0c17d70003cs --api_key=8868d820de630130be5e12313d08f870 --site_id=51fcf311ea2e0c17d70003cf
+Dear Customer, your Yottaa account is now provisioned!
+Use `heroku addons:docs yottaa:free` to view documentation.
+```
+
+You will need to login [[Yottaa Apps Console]](http://apps.yottaa.com) to find out the above three parameters.
+
+Once Yottaa has been added three custom settings, `YOTTAA_API_KEY`, `YOTTAA_SITE_ID` and `YOTTAA_USER_ID`, will be available in the app configuration.
 
 This can be confirmed using the `heroku config:get` command.
 
 ```term
 $ heroku config
 === yottaa-heroku-app Config Vars
-YOTTAA_API_KEY: 8868d820de630130be5e12313d08f879
+YOTTAA_API_KEY: 8868d820de630130be5e12313d08f870
 YOTTAA_SITE_ID: 51fcf311ea2e0c17d70003cf
 YOTTAA_USER_ID: 51fcf311ea2e0c17d70003cs
 ```
+
+
 
 After installing Yottaa the application should be configured to fully integrate with the add-on.
 
