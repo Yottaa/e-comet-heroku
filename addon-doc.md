@@ -181,19 +181,6 @@ $ bundle install
 
 ## Monitoring & Logging
 
-Stats and the current state of Yottaa can be displayed via the CLI.
-
-```term
-$ heroku yottaa:command
-example output
-```
-
-Yottaa activity can be observed within the Heroku log-stream by [[describe add-on logging recognition, if any]].
-
-```term
-$ heroku logs -t | grep 'yottaa pattern'
-```
-
 ## Dashboard
 
 > callout
@@ -205,29 +192,24 @@ The dashboard can be accessed via the CLI:
 
 ```term
 $ heroku addons:open yottaa
-Opening yottaa for sharp-mountain-4005…
+Opening yottaa for yottaa-heroku-app…
 ```
 
 or by visiting the [Heroku apps web interface](http://heroku.com/myapps) and selecting the application in question. Select Yottaa from the Add-ons menu.
 
 ## Troubleshooting
 
-If [[feature X]] does not seem to be [[common issue Y]] then 
-[[add specific commands to look for symptoms of common issue Y]].
-
 ## Migrating between plans
 
 > note
 > Application owners should carefully manage the migration timing to ensure proper application function during the migration process.
 
-[[Specific migration process or any migration tips 'n tricks]]
-
 Use the `heroku addons:upgrade` command to migrate to a new plan.
 
 ```term
-$ heroku addons:upgrade yottaa:newplan
------> Upgrading yottaa:newplan to sharp-mountain-4005... done, v18 ($49/mo)
-       Your plan has been updated to: yottaa:newplan
+$ heroku addons:upgrade yottaa:enterprise
+-----> Upgrading yottaa:enterprise to yottaa-heroku-app... done, v5 ($4999/mo)
+       Your plan has been updated to: yottaa:enterprise
 ```
 
 ## Removing the add-on
@@ -237,11 +219,9 @@ Yottaa can be removed via the  CLI.
 > warning
 > This will destroy all associated data and cannot be undone!
 
-    :::term
-    $ heroku addons:remove yottaa
-    -----> Removing yottaa from sharp-mountain-4005... done, v20 (free)
-
-Before removing Yottaa a data export can be performed by [[describe steps if export is available]].
+```term
+$ heroku addons:remove yottaa
+Removing yottaa:free on yottaa-heroku-app... done, v5 (free)
 
 ## Support
 
