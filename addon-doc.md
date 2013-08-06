@@ -1,6 +1,20 @@
-[Yottaa](http://addons.heroku.com/yottaa) is an [add-on](http://addons.heroku.com) for providing functionality X.
+[Yottaa](http://addons.heroku.com/yottaa) is an [add-on](http://addons.heroku.com) for web and mobile optimization, CDN, DNS and Firewall with integrated monitoring.
 
-Adding functionality X to an application provides benefits X, Y and Z. [[Sell the benefits here! Don't skimp - developers have many options these days.]]
+### Datacenter Optimization
+Accelerate server-side performance and eliminate latency with powerful content optimization. Yottaa enables everything from push-button acceleration to robust server-side content optimizations, without the complexity and people-hours required by individual or DIY solutions
+
+### Middle Mile Optimization (CDN)
+Accelerate content delivery with cutting-edge CDN federation technology, leveraging a hybrid architecture of physical and cloud datacenters to ensure the most efficient and resilient network architecture possible.
+
+### Content Optimization (Last Mile)
+Reduce payload, minimize round trip requests, and apply network optimizations to deliver the right content to the right device – right on time
+
+### iphone Device & Browser Optimization
+Minimize client-side processing and optimize above-the-fold rendering to provide the best end user experience across all devices: desktops, tablets and phones
+
+## shieldoutline Integrated Security
+Guarantee resource elasticity to scale for traffic spikes so your success does not result in unexpected downtime or damage to your brand. Block unwanted and throttle low-priority traffic to ensure your target visitors have the end user experience they demand.
+
 
 Yottaa is accessible via an API and has supported client libraries for [[Java|Ruby|Python|Node.js|Clojure|Scala]]*.
 
@@ -12,15 +26,24 @@ Yottaa can be attached to a Heroku application via the  CLI:
 > A list of all plans available can be found [here](http://addons.heroku.com/yottaa).
 
 ```term
-$ heroku addons:add yottaa
------> Adding yottaa to sharp-mountain-4005... done, v18 (free)
+$ heroku addons:add yottaa --first_name=John --last_name=Smith --email=john.smith@yottaa.com --phone=123456789 --site=http://www.yoursite.com
+Dear John Smith, your Yottaa account is now provisioned!
+Use `heroku addons:docs yottaa:free` to view documentation.
 ```
 
-Once Yottaa has been added a `ADDON-CONFIG-NAME` setting will be available in the app configuration and will contain the [[variable purpose, i.e. "canonical URL used to access the newly provisioned Yottaa service instance."]]. This can be confirmed using the `heroku config:get` command.
+Once Yottaa has been added three custom settings, `YOTTAA_API_KEY`, `YOTTAA_SITE_ID` and `YOTTAA_USER_ID` will be available in the app configuration.
+
+
+
+
+This can be confirmed using the `heroku config:get` command.
 
 ```term
-$ heroku config:get ADDON-CONFIG-NAME
-http://user:pass@instance.ip/resourceid
+$ heroku config
+=== yottaa-heroku-app Config Vars
+YOTTAA_API_KEY: 8868d820de630130be5e12313d08f879
+YOTTAA_SITE_ID: 51fcf311ea2e0c17d70003cf
+YOTTAA_USER_ID: 51fcf311ea2e0c17d70003cs
 ```
 
 After installing Yottaa the application should be configured to fully integrate with the add-on.
