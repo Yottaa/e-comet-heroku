@@ -33,6 +33,8 @@ To provision a new Yottaa account for your site, you can run the `heroku addons:
 
 `email`: Account owner's email
 
+`phone`: Account owner's phone number
+
 `site`: URL of the target site
 
 ```term
@@ -54,7 +56,7 @@ Dear Customer, your Yottaa account is now provisioned!
 Use `heroku addons:docs yottaa:free` to view documentation.
 ```
 
-You will need to login [[Yottaa Apps Console]](http://apps.yottaa.com) to find out the above three parameters.
+You will need to login [Yottaa Apps Console](http://apps.yottaa.com) to find out the above three parameters.
 
 Once Yottaa has been added three custom settings, `YOTTAA_API_KEY`, `YOTTAA_SITE_ID` and `YOTTAA_USER_ID`, will be available in the app configuration.
 
@@ -68,9 +70,43 @@ YOTTAA_SITE_ID: 51fcf311ea2e0c17d70003cf
 YOTTAA_USER_ID: 51fcf311ea2e0c17d70003cs
 ```
 
+After installing Yottaa you will need to configure your DNS records to fully integrate your application with the add-on.
+
+## DNS setup
+
+### Setup Custom Domain for Your Heroku App
+
+Your app on Heroku is accessible via its `herokuapp.com` app subdomain. E.g., for an app named `yottaa-heroku-app` it’s available at `yottaa-heroku-app.herokuapp.com`. To serve traffic on your own domain, e.g., `heroku.bestwebsitemonitoring.info`, you need to configure your application with a custom domain.
+
+In general, you will need to take two steps
 
 
-After installing Yottaa the application should be configured to fully integrate with the add-on.
+1. Tell Heroku which custom domains are specific to your application
+
+```term
+$ heroku domains:add heroku.bestwebsitemonitoring.info
+Adding heroku.bestwebsitemonitoring.info to yottaa-heroku-app... done
+```
+
+2. Configure your application’s DNS to point to Heroku e.g. adding a CNAME record pointing the subdomain to your app’s Heroku herokuapp.com hostname.
+
+| Record        | Name          | Target  |
+| ------------- |:-------------:| -------:|
+| `CNAME`       | heroku.bestwebsitemonitoring.info | yottaa-heroku-app.herokuapp.com |
+
+For more information on setting up Heroku custom domains, please refer to [this document](https://devcenter.heroku.com/articles/custom-domains).
+
+### Activate Your Yottaa Account
+
+Once you configure your custom domain for your Heroku app, next step will be activating your Yottaa account that you have signed up or registered through the Heroku command line.
+
+1. First, locate your site's Yottaa CNAME by logging in [Yottaa Apps Console](http://apps.yottaa.com) and picking your site.
+2. Then modify the `CNAME` record you just created for your Heroku App with the Yotaa CNAME.
+
+| Record        | Name          | Target  |
+| ------------- |:-------------:| -------:|
+| `CNAME`       | heroku.bestwebsitemonitoring.info | 72620360de5d013012371231381401ec.yottaa.net |
+
 
 ## Local setup
 
