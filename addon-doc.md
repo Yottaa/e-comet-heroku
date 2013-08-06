@@ -126,9 +126,9 @@ $ more .env
 
 ## Using with Ruby On Rails
 
-Yottaa provides [REST-style services](https://api.yottaa.com) for your ROR app to retrieve site optimizer information, change optimzer status etc.
+Yottaa provides [REST-style services](https://api.yottaa.com) for your ROR app to retrieve site optimizer information, change optimizer status etc.
 
-The following is a Ruby example that retrieve your site optimizer configuration.
+The following is a Ruby example that returns your site optimizer configuration.
 
 ```ruby
 require 'bundler'
@@ -179,7 +179,7 @@ end
 
 Yottaa provides [Java client library](https://github.com/Yottaa/e-comet-java) for making it easy to access Yottaa REST services.
 
-Here is a Java code snippet that retrieves the last monitor sample from your Yottaa account.
+Here is a Java code snippet that retrieves metrics of the last monitoring sample from your Yottaa account.
 
 ```java
 ....
@@ -198,10 +198,27 @@ System.out.println("Sum     ==> " + Integer.parseInt(httpMetricsConnect.get("sum
 
 ## Dashboard
 
-> callout
-> For more information on the features available within the Yottaa dashboard please see the docs at [mysite.com/docs](mysite.com/docs).
+> For more information on the features available within the Yottaa dashboard please see the docs at [Yottaa Website](http://www.yottaa.com).
 
-The Yottaa dashboard allows you to [[describe dashboard features]].
+The Yottaa dashboard allows you to
+
+### Display and Change Optimizer Status
+
+If the current status of your site optimizer is live, you can switch it to either bypass mode or transparent proxy mode.
+
+Otherwise, you can resume it to live status.
+
+### Flush Yottaa Cache
+
+Remove all cached items of your site from Yottaa CDN servers.
+
+### Purge Yottaa Cache
+
+Remove all cached items of your site that match the provide list of regular expressions from Yottaa CDN servers.
+
+### Update Yottaa Optimizer Settings
+
+Coming soon...
 
 The dashboard can be accessed via the CLI:
 
