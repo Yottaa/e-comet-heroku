@@ -91,13 +91,28 @@
                 %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Purge Cache", :name=>"action"}
               %td
       %h2 Yottaa Settings
-      %table
-        %tr
-          %td <span class="setting-item-title">User Id</span>
-          %td #{@user_id}
-        %tr
-          %td <span class="setting-item-title">Site Id</span>
-          %td #{@site_id}
-        %tr
-          %td <span class="setting-item-title">API Key</span>
-          %td #{@api_key}
+      %form{:id=>"yottaa-optimizer-update-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/update"}
+        %table
+          %tr
+            %td <span class="setting-item-title">User Id</span>
+            %td #{@user_id}
+          %tr
+            %td <span class="setting-item-title">Site Id</span>
+            %td #{@site_id}
+          %tr
+            %td <span class="setting-item-title">API Key</span>
+            %td #{@api_key}
+          %tr
+            %td <span class="setting-item-title">Host</span>
+            %td
+              %input{:id=>"yottaa_host", :name=>"yottaa_host", :size=>"60", :value=>"#{@yottaa_host}"}
+              %input{:id=>"app_domain", :type=>"button", :value=>"Switch to app domain", :onclick=>"document.getElementById('yottaa_host').value='#{@app_domain}';return false;"}
+          %tr
+            %td <span class="setting-item-title">Email</span>
+            %td
+              %input{:id=>"yottaa_email", :name=>"yottaa_email", :size=>"60", :value=>"#{@yottaa_email}"}
+              %input{:id=>"owner_email", :type=>"button", :value=>"Switch to owner email", :onclick=>"document.getElementById('yottaa_email').value='#{@email}';return false;"}
+          %tr{:class=>"even"}
+            %td{:colspan=>"2"}
+              %input{:id=>"update-submit", :class=>"form-submit", :type=>"submit", :value=>"Update", :name=>"action", :disabled=>"disabled"}
+            %td

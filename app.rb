@@ -76,15 +76,26 @@ class App < Sinatra::Base
         user_id = session[:user_id]
       end
       if ! user_id.nil? && ! site_id.nil?
+        # get app email and domain url
+        uri = URI.parse('https://api.heroku.com/vendor/apps/' + site_id + '-' + user_id)
+        https = https_connection(uri)
+        req = Net::HTTP::Get.new(uri)
+        req.basic_auth ENV['HEROKU_USERNAME'], ENV['HEROKU_PASSWORD']
+        https.set_debug_output($stdout)
+        res = https.request(req)
+        result = JSON.parse(res.body)
+        STDOUT.puts "Domain ==>" + result["domains"][0]
+        session[:app_domain] = result["domains"][0]
+
         # get api_key
         uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + user_id)
         https = https_connection(uri)
         req = Net::HTTP::Get.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
         https.set_debug_output($stdout)
-
         res = https.request(req)
         result = JSON.parse(res.body)
         session[:api_key] = result["api_key"]
+        session[:yottaa_email] = result["email"]
 
         # get site_details
         uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + user_id + "/sites/" + site_id)
@@ -133,6 +144,9 @@ class App < Sinatra::Base
     @resource = session[:resource]
     @email    = session[:email]
     @status = session[:resource]['optimizer']
+    @yottaa_email = session[:yottaa_email]
+    @yottaa_host = session[:resource]['host']
+    @app_domain = session[:app_domain]
 
     @message = session[:message]
     @error = session[:error]
@@ -202,7 +216,7 @@ class App < Sinatra::Base
     last_name = options.fetch('last_name','')
     phone = options.fetch('phone','')
     email = options.fetch('email', json_body.fetch('heroku_id'))
-    site = options.fetch('site','')
+    site = options.fetch('site','http://www.yottaa.com')
 
     site_id = options.fetch('site_id','')
     user_id = options.fetch('user_id','')
@@ -211,7 +225,7 @@ class App < Sinatra::Base
     plan = json_body.fetch("plan", "free")
 
     # Check if both email and site are provided
-    if !email.empty? && !site.empty?
+    if !email.empty? && !site.empty? && site_id.empty? && user_id.empty? && api_key.empty?
       STDOUT.puts "Creating a new Yottaa account"
 
       uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts")
@@ -231,19 +245,6 @@ class App < Sinatra::Base
                  :config => {"YOTTAA_SITE_ID" => result["site_id"], "YOTTAA_USER_ID" => result["user_id"], "YOTTAA_API_KEY" => result["api_key"]},
                  :message => 'Dear ' + first_name + ' ' + last_name +', your Yottaa account is now provisioned!'
              }.to_json)
-=begin
-        # Try to figure out the domain name of the app which just installed this add-on
-        uri = URI.parse("https://api.heroku.com/vendor/apps/" + resource_id)
-        https = https_connection(uri)
-        HEROKU_CUSTOM_HEADER = {"Accept" =>'application/vnd.heroku+json; version=3'}
-        req = Net::HTTP::Get.new(uri, HEROKU_CUSTOM_HEADER)
-        req.basic_auth "yong.qu@yottaa.com", "y0ttaa1234"
-        https.set_debug_output($stdout)
-        res = https.request(req)
-        result = JSON.parse(res.body)
-        domain = result["domains"][0]
-        # Now update Yottaa account for the actual domain name???
-=end
       else
         status 422
         body(result['error'].to_json)
@@ -268,7 +269,7 @@ class App < Sinatra::Base
          end
       else
         status 422
-        body({:error => 'Valid email and site url must be provided.'}.to_json)
+        body({:error => 'Valid Yottaa configuration must be provided.'}.to_json)
       end
     end
   end
@@ -297,6 +298,7 @@ class App < Sinatra::Base
       body(result["error"].to_json)
     end
 
+    "ok"
   end
 
   # plan change
