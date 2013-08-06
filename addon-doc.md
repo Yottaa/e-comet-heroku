@@ -124,52 +124,52 @@ $ more .env
 > warning
 > Credentials and other sensitive configuration values should not be committed to source-control. In Git exclude the .env file with: `echo .env >> .gitignore`.
 
-### Service setup
-
-[[If there is a local executable required (like for the memcache add-on) then include installation instructions. If not, omit entire section]]
-
-Yottaa can be installed for use in a local development  environment.  Typically this entails [[installing the software | creating another version of the service]] and pointing the ADDON-CONFIG-NAME to this [[local | remote]] service.
-
-<table>
-  <tr>
-    <th>If you have...</th>
-    <th>Install with...</th>
-  </tr>
-  <tr>
-    <td>Mac OS X</td>
-    <td style="text-align: left"><code>brew install X</code></td>
-  </tr>
-  <tr>
-    <td>Windows</td>
-    <td style="text-align: left">Link to some installer</td>
-  </tr>
-  <tr>
-    <td>Ubuntu Linux</td>
-    <td style="text-align: left"><code>apt-get install X</code></td>
-  </tr>
-  <tr>
-    <td>Other</td>
-    <td style="text-align: left">Link to some raw package</td>
-  </tr>
-</table>
-
 ## Using with Rails 3.x
 
-[[Repeat this ##Rails 3.x sections for all other supported languages/frameworks including Java, Node.js, Python, Scala, Play!, Grails, Clojure. Heroku is a polyglot platform - don't box yourself into supporting a single language]]
-
-Ruby on Rails applications will need to add the following entry into their `Gemfile` specifying the Yottaa client library.
-
 ```ruby
-gem 'yottaa'
+require 'bundler'
+require 'net/http'
+require 'net/https'
+require 'uri'
+require 'json'
+
+Bundler.require
+
+STDOUT.sync = true
+
+# utility class for yottaa custom header
+class CaseSensitiveString < String
+  def downcase
+    self
+  end
+
+  def capitalize
+    self
+  end
+end
+
+STDOUT.puts "Retrieve details of the site you have registerd with Yottaa."
+uri = URI.parse("https://api.yottaa.com/sites/" + ENV['YOTTAA_SITE_ID'])
+
+https = Net::HTTP.new(uri.host, uri.port)
+https.use_ssl = true
+https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+custom_header_key = CaseSensitiveString.new("YOTTAA-API-KEY")
+req = Net::HTTP::Get.new(uri, {custom_header_key =>ENV['YOTTAA_API_KEY']})
+req.set_form_data({"user_id" => ENV['YOTTAA_USER_ID']})
+https.set_debug_output($stdout)
+
+res = https.request(req)
+
+result = JSON.parse(res.body)
+
+if !result.has_key? 'error'
+  STDOUT.puts result.to_json
+else
+  STDOUT.puts result.to_json
+end
 ```
-
-Update application dependencies with bundler.
-
-```term
-$ bundle install
-```
-
-[[Describe briefly how to use/integrate your service from Rails 3.x with code samples]]
 
 ## Using with Python/Django
 
