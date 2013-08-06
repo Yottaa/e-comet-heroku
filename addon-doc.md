@@ -25,7 +25,15 @@ Yottaa can be attached to a Heroku application via the  CLI:
 
 ### Sign up a new Yottaa account
 
-To provision a new Yottaa account for your site, you can run the heroku addons command with optional parameters, `first_name`, `last_name`, `email`, and `site`.
+To provision a new Yottaa account for your site, you can run the `heroku addons:add` command with following parameters
+
+`first_name`: Account owner's first name
+
+`last_name`: Account owner's last name
+
+`email`: Account owner's email
+
+`site`: URL of the target site
 
 ```term
 $ heroku addons:add yottaa --first_name=John --last_name=Smith --email=john.smith@yottaa.com --phone=123456789 --site=http://www.yoursite.com
