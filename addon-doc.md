@@ -15,7 +15,7 @@ Minimize client-side processing and optimize above-the-fold rendering to provide
 ##### Integrated Security
 Guarantee resource elasticity to scale for traffic spikes so your success does not result in unexpected downtime or damage to your brand. Block unwanted and throttle low-priority traffic to ensure your target visitors have the end user experience they demand.
 
-Yottaa is accessible via an API and has supported client libraries for [Java]|[Ruby]((#ruby-api)).
+Yottaa is accessible via an API and has supported client libraries for [Java]|[Ruby](#using-with-ruby-on-rails).
 
 ## Provisioning the add-on
 
@@ -124,7 +124,7 @@ $ more .env
 > warning
 > Credentials and other sensitive configuration values should not be committed to source-control. In Git exclude the .env file with: `echo .env >> .gitignore`.
 
-## <a id="ruby-api"></a>Using with Ruby On Rails
+## Using with Ruby On Rails
 
 ```ruby
 require 'bundler'
