@@ -15,7 +15,7 @@ Minimize client-side processing and optimize above-the-fold rendering to provide
 ##### Integrated Security
 Guarantee resource elasticity to scale for traffic spikes so your success does not result in unexpected downtime or damage to your brand. Block unwanted and throttle low-priority traffic to ensure your target visitors have the end user experience they demand.
 
-Yottaa is accessible via an API and has supported client libraries for [Java]|[Ruby](#using-with-ruby-on-rails).
+Yottaa is accessible via an API and has supported client libraries for [Java](#using-with-java)|[Ruby](#using-with-ruby-on-rails).
 
 ## Provisioning the add-on
 
@@ -126,6 +126,10 @@ $ more .env
 
 ## Using with Ruby On Rails
 
+Yottaa provides [REST-style services](https://api.yottaa.com) for your ROR app to retrieve site optimizer information, change optimzer status etc.
+
+The following is a Ruby example that retrieve your site optimizer configuration.
+
 ```ruby
 require 'bundler'
 require 'net/http'
@@ -171,12 +175,24 @@ else
 end
 ```
 
-## Using with Python/Django
-
-
 ## Using with Java
 
-[[Repeat structure from Rails 3.x section for each supported language]]
+Yottaa provides [Java client library](https://github.com/Yottaa/e-comet-java) for making it easy to access Yottaa REST services.
+
+Here is a Java code snippet that retrieves the last monitor sample from your Yottaa account.
+
+```java
+....
+YottaaHttpClientPublic yottaaHttpClientPublic = new YottaaHttpClientPublic(System.getenv('YOTTAA_API_KEY'));
+JSONObject lastSampleMetrics = yottaaHttpClient.getLastSample();
+
+JSONObject httpMetrics = (JSONObject) lastSampleMetrics.get("http_metrics");
+JSONObject httpMetricsConnect = (JSONObject) httpMetrics.get("connect");
+
+System.out.println("Average ==> " + Double.parseDouble(httpMetricsConnect.get("average").toString()));
+System.out.println("Sum     ==> " + Integer.parseInt(httpMetricsConnect.get("sum").toString()));
+...
+```
 
 ## Monitoring & Logging
 
