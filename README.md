@@ -7,3 +7,9 @@ Whether you're already a Yottaa Site Optimizer user or want to try it for the fi
 ## Plugin Setup ##
 
 [Yottaa Heroku Add-on Documentation](./addon-doc.md)
+
+
+## Links ##
+
+* [Yottaa](http://www.yottaa.com)
+* [Heroku](https://addons.heroku.com/yottaa)
