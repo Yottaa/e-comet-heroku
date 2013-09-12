@@ -116,6 +116,7 @@ a.button:link, a.button:visited, a.button:hover, a.button:active {
 
 span.setting-item-title {
     font-weight: bold;
+    margin-right: 20px;
 }
 
 table, table tr, table tr td {
@@ -222,4 +223,15 @@ table.status, table.others {
     width: 960px;
 }
 
+div.help {
+    font-size: 0.75em;
+}
+
+table.update {
+    margin: 10px 0;
+}
+
+table.update input[type="submit"] {
+    margin: 10px 0;
+}
 

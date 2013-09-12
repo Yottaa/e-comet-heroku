@@ -27,35 +27,46 @@
         %p Your site is currently in <span class="status-paused">Transparent Proxy mode</span>.
       -else
       %h2 Yottaa Settings
-      %form{:id=>"yottaa-optimizer-update-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/update"}
-        %table
-          %tr
-            %td <span class="setting-item-title">User Id</span>
-            %td #{@user_id}
-          %tr
-            %td <span class="setting-item-title">Site Id</span>
-            %td #{@site_id}
-          %tr
-            %td <span class="setting-item-title">API Key</span>
-            %td #{@api_key}
+      %table
+        %tr
+          %td <span class="setting-item-title">User Id</span>
+          %td #{@user_id}
+        %tr
+          %td <span class="setting-item-title">Site Id</span>
+          %td #{@site_id}
+        %tr
+          %td <span class="setting-item-title">API Key</span>
+          %td #{@api_key}
+        -if !@deferred_host
           %tr
             %td <span class="setting-item-title">Host</span>
-            %td
-              -if @deferred_host
+            %td #{@yottaa_host}
+      %form{:id=>"yottaa-optimizer-update-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/update"}
+        %table{:class=>"update"}
+          -if @deferred_host
+            %tr
+              %td <span class="setting-item-title">Host</span>
+              %td
                 %input{:id=>"yottaa_host", :name=>"yottaa_host", :size=>"60", :value=>""}
                 %input{:id=>"app_domain", :type=>"button", :value=>"Switch to app domain", :onclick=>"document.getElementById('yottaa_host').value='#{@app_domain}';return false;"}
-              -else
-                %td #{@yottaa_host}
+            %tr
+              %td
+              %td
+                %div{:class=>"help"}
+                  Required for Yottaa site optimizer.
           %tr
             %td <span class="setting-item-title">Email</span>
             %td
               %input{:id=>"yottaa_email", :name=>"yottaa_email", :size=>"60", :value=>"#{@yottaa_email}"}
               %input{:id=>"owner_email", :type=>"button", :value=>"Switch to owner email", :onclick=>"document.getElementById('yottaa_email').value='#{@email}';return false;"}
+          %tr
+            %td
+            %td
+              %div{:class=>"help"}
+                Required for Yottaa notification.
           %tr{:class=>"even"}
             %td{:colspan=>"2"}
-              -if @deferred_host
-                %input{:id=>"update-submit", :class=>"form-submit", :type=>"submit", :value=>"Update", :name=>"action", :disabled=>"disabled"}
-            %td
+              %input{:id=>"update-submit", :class=>"form-submit", :type=>"submit", :value=>"Update", :name=>"action"}
       %h2 Links
       %div
         %a{:class =>"",:href => "https://apps.yottaa.com/", :target=>"_blank", :title => "Yottaa Dashboard"} Yottaa Dashboard
@@ -63,61 +74,62 @@
         %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{@site_id}/optimizer", :target=>"_blank", :title => "Yottaa Site Overview"} Yottaa Site Overview
       %div
         %a{:class =>"",:href => "https://apps.yottaa.com/framework/web/sites/#{@site_id}/settings", :target=>"_blank", :title => "Yottaa Optimization Configuration"} Yottaa Optimization Configuration
-      %h2 Actions
-      %h3 Switch Optimizer Mode
-      -if @status == 'preview'
-        %table.status
-          %tr
-            %td
-              %a{:class=>"button", :href=>"https://apps.yottaa.com/framework/web/sites/#{@site_id}", :target=>"_blank"} Activate Optimizations
-            %td
-              Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
-      -elsif @status == 'live'
-        %form{:id=>"yottaa-optimizer-bypass-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/bypass"}
+      -if !@deferred_host
+        %h2 Actions
+        %h3 Switch Optimizer Mode
+        -if @status == 'preview'
+          %table.status
+            %tr
+              %td
+                %a{:class=>"button", :href=>"https://apps.yottaa.com/framework/web/sites/#{@site_id}", :target=>"_blank"} Activate Optimizations
+              %td
+                Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
+        -elsif @status == 'live'
+          %form{:id=>"yottaa-optimizer-bypass-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/bypass"}
+            %div
+              %table.status
+                %tr{:class=>"odd"}
+                  %td
+                    %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Bypass", :name=>"action"}
+                  %td
+                    In Bypass Mode, Yottaa DNS will route all traffic to your origin server directly, by-passing optimizations, SSL termination and origin server shielding etc. Your origin servers IP address are visible to anyone in this mode.
+          %form{:id=>"yottaa-optimizer-transparent-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/transparent"}
+            %div
+              %table.status
+                %tr{:class=>"odd"}
+                  %td
+                    %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Transparent Proxy", :name=>"action"}
+                  %td
+                    In Transparent Proxy Mode, Yottaa will proxy your site traffic through the Yottaa Network without applying any optimization. Other features such as SSL termination, site protection and Private Test are in effect as usual. Your origin servers IP address are shielded by Yottaa.
+        -elsif @status == 'bypass' ||  @status == 'transparent proxy'
+          %form{:id=>"yottaa-optimizer-resume-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/resume"}
+            %div
+              %table.status
+                %tr{:class=>"odd"}
+                  %td
+                    %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Resume", :name=>"action"}
+                  %td
+                    Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
+        -else
+        %h3 Other Actions
+        %form{:id=>"yottaa-optimizer-flush-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/flush"}
           %div
-            %table.status
+            %table.others
+              %tr{:class=>"odd"}
+                %td{:class=>"form-paths"}
+                  Clearing the cache will remove all of your sites resources from our CDN. Use this option if you have updated a resource (gif, css, JavaScript).
               %tr{:class=>"odd"}
                 %td
-                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Bypass", :name=>"action"}
-                %td
-                  In Bypass Mode, Yottaa DNS will route all traffic to your origin server directly, by-passing optimizations, SSL termination and origin server shielding etc. Your origin servers IP address are visible to anyone in this mode.
-        %form{:id=>"yottaa-optimizer-transparent-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/transparent"}
+                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Flush Cache", :name=>"action"}
+        %form{:id=>"yottaa-optimizer-purge-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/purge"}
           %div
-            %table.status
+            %table
               %tr{:class=>"odd"}
+                %td{:colspan=>"2"}
+                  %textarea{:id=>"paths", :class=>"form-paths", :name=>"paths"}
+                  %div Purge cache based on entered regular expressions (one regular expression for each line).
+              %tr{:class=>"even"}
                 %td
-                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Transparent Proxy", :name=>"action"}
+                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Purge Cache", :name=>"action"}
                 %td
-                  In Transparent Proxy Mode, Yottaa will proxy your site traffic through the Yottaa Network without applying any optimization. Other features such as SSL termination, site protection and Private Test are in effect as usual. Your origin servers IP address are shielded by Yottaa.
-      -elsif @status == 'bypass' ||  @status == 'transparent proxy'
-        %form{:id=>"yottaa-optimizer-resume-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/resume"}
-          %div
-            %table.status
-              %tr{:class=>"odd"}
-                %td
-                  %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Resume", :name=>"action"}
-                %td
-                  Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
-      -else
-      %h3 Other Actions
-      %form{:id=>"yottaa-optimizer-flush-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/flush"}
-        %div
-          %table.others
-            %tr{:class=>"odd"}
-              %td{:class=>"form-paths"}
-                Clearing the cache will remove all of your sites resources from our CDN. Use this option if you have updated a resource (gif, css, JavaScript).
-            %tr{:class=>"odd"}
-              %td
-                %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Flush Cache", :name=>"action"}
-      %form{:id=>"yottaa-optimizer-purge-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/purge"}
-        %div
-          %table
-            %tr{:class=>"odd"}
-              %td{:colspan=>"2"}
-                %textarea{:id=>"paths", :class=>"form-paths", :name=>"paths"}
-                %div Purge cache based on entered regular expressions (one regular expression for each line).
-            %tr{:class=>"even"}
-              %td
-                %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Purge Cache", :name=>"action"}
-              %td
 

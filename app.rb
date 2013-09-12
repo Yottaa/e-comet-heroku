@@ -99,20 +99,34 @@ class App < Sinatra::Base
         session[:api_key] = result["api_key"]
         session[:yottaa_email] = result["email"]
 
-        # get site_details
-        uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + user_id + "/sites/" + site_id)
+        # get the site list to see if it is deferred
+        uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + user_id + "/sites")
         https = https_connection(uri)
         req = Net::HTTP::Get.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
         https.set_debug_output($stdout)
-
         res = https.request(req)
-        result = JSON.parse(res.body)
-        if result.has_key? 'id'
+        result2 = JSON.parse(res.body)
+
+        if result2["sites"].length > 0
+          # get site_details
+          uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + user_id + "/sites/" + site_id)
+          https = https_connection(uri)
+          req = Net::HTTP::Get.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
+          https.set_debug_output($stdout)
+
+          res = https.request(req)
+          result = JSON.parse(res.body)
+          if result.has_key? 'id'
+            session[:site_id] = site_id
+            session[:user_id] = user_id
+            return result
+          else
+            halt 404, 'resource not found'
+          end
+        else
           session[:site_id] = site_id
           session[:user_id] = user_id
           return result
-        else
-          halt 404, 'resource not found'
         end
       else
         halt 404, 'resource not found'
@@ -441,34 +455,48 @@ class App < Sinatra::Base
   post "/update" do
     new_host = params[:yottaa_host]
     new_email = params[:yottaa_email]
-    if ! new_host.empty?
-      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/sites/" + session[:site_id] + "/update_host?new_host=" + new_host)
+    if ! new_host.nil? && ! new_host.empty?
+      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/sites/" + session[:site_id] + "/update_host")
+      uri.query = ::URI.encode_www_form( 'new_host' => new_host )
       https = https_connection(uri)
-      req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>session[:api_key]})
+      req = Net::HTTP::Put.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
       https.set_debug_output($stdout)
       res = https.request(req)
       result = JSON.parse(res.body)
 
       if !(result.has_key? 'error_response') && !(result.has_key? 'error')
-        session[:message] = 'Site ' + session[:site_id] +" has been updated with new site" + new_host + "."
+        session[:message] = 'Site ' + session[:site_id] +" has been updated with host " + new_host + "."
       else
-        error = result["error"].nil? ? result["error_response"] : result["error"]
-        session[:error] = 'Failed to update host ' + error
+        error = ""
+        if ! result["error"].nil?
+          error = result["error"]
+        end
+        if ! result["error_response"].nil?
+          error = result["error_response"]
+        end
+        session[:error] = 'Failed to update host ' + error.to_s + "!"
       end
     end
     if ! new_email.empty?
-      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/update_email?new_email=" + new_email)
+      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/update_email")
+      uri.query = ::URI.encode_www_form( 'new_email' => new_email )
       https = https_connection(uri)
-      req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>session[:api_key]})
+      req = Net::HTTP::Put.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
       https.set_debug_output($stdout)
       res = https.request(req)
       result = JSON.parse(res.body)
 
       if !(result.has_key? 'error_response') && !(result.has_key? 'error')
-        session[:message] = 'Account ' + session[:user_id] +" has been updated with new email " + new_host + "."
+        session[:message] = 'Account ' + session[:user_id] +" has been updated with new email " + new_email + "."
       else
-        error = result["error"].nil? ? result["error_response"] : result["error"]
-        session[:error] = 'Failed to update email ' + error
+        error = ""
+        if ! result["error"].nil?
+          error = result["error"]
+        end
+        if ! result["error_response"].nil?
+          error = result["error_response"]
+        end
+        session[:error] = 'Failed to update email ' + error.to_s + "!"
       end
     end
     session[:resource]   = get_resource
