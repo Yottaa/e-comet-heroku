@@ -29,8 +29,10 @@ class App < Sinatra::Base
 
   # Production settings
   YOTTAA_API_URL_ROOT = "https://api.yottaa.com"
-  YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'455df7500258012f663b12313d145ceb'}
-  YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/4d34f75b74b1553ba500007f"
+  #YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'455df7500258012f663b12313d145ceb'}
+  #YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/4d34f75b74b1553ba500007f"
+  YOTTAA_CUSTOM_HEADER_PARTNER = {CaseSensitiveString.new("YOTTAA-API-KEY") =>'8cb77c60fd430130165a1231381401ec'}
+  YOTTAA_API_URL_PARTNER = YOTTAA_API_URL_ROOT + "/partners/5230bfce3c8816662100002c"
 
   helpers do
     def protected!
@@ -145,7 +147,13 @@ class App < Sinatra::Base
     @email    = session[:email]
     @status = session[:resource]['optimizer']
     @yottaa_email = session[:yottaa_email]
-    @yottaa_host = session[:resource]['host']
+    if session[:resource].has_key? 'host'
+      @yottaa_host = session[:resource]['host']
+      @deferred_host = false
+    else
+      @yottaa_host = ''
+      @deferred_host = true
+    end
     @app_domain = session[:app_domain]
 
     @message = session[:message]
@@ -216,7 +224,7 @@ class App < Sinatra::Base
     last_name = options.fetch('last_name','')
     phone = options.fetch('phone','')
     email = options.fetch('email', json_body.fetch('heroku_id'))
-    site = options.fetch('site','http://www.yottaa.com')
+    site = options.fetch('site','')
 
     site_id = options.fetch('site_id','')
     user_id = options.fetch('user_id','')
@@ -268,8 +276,31 @@ class App < Sinatra::Base
                }.to_json)
          end
       else
-        status 422
-        body({:error => 'Valid Yottaa configuration must be provided.'}.to_json)
+        #status 422
+        #body({:error => 'Valid Yottaa configuration must be provided.'}.to_json)
+        STDOUT.puts "Creating a new Yottaa account with deferred host"
+
+        uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts")
+        https = https_connection(uri)
+        req = Net::HTTP::Post.new(uri, YOTTAA_CUSTOM_HEADER_PARTNER)
+        req.set_form_data({"first_name" => first_name, "last_name" => last_name, "email" => email, "phone" => phone, "plan" => plan, "deferred_host" => true})
+        https.set_debug_output($stdout)
+
+        res = https.request(req)
+        result = JSON.parse(res.body)
+
+        if !result.has_key? 'error'
+          status 201
+          resource_id = result["site_id"] + '-' + result["user_id"];
+          body({
+                   :id => resource_id,
+                   :config => {"YOTTAA_SITE_ID" => result["site_id"], "YOTTAA_USER_ID" => result["user_id"], "YOTTAA_API_KEY" => result["api_key"]},
+                   :message => 'Dear ' + first_name + ' ' + last_name +', your Yottaa account is now provisioned!'
+               }.to_json)
+        else
+          status 422
+          body(result['error'].to_json)
+        end
       end
     end
   end
@@ -407,4 +438,41 @@ class App < Sinatra::Base
     redirect '/'
   end
 
+  post "/update" do
+    new_host = params[:yottaa_host]
+    new_email = params[:yottaa_email]
+    if ! new_host.empty?
+      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/sites/" + session[:site_id] + "/update_host?new_host=" + new_host)
+      https = https_connection(uri)
+      req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>session[:api_key]})
+      https.set_debug_output($stdout)
+      res = https.request(req)
+      result = JSON.parse(res.body)
+
+      if !(result.has_key? 'error_response') && !(result.has_key? 'error')
+        session[:message] = 'Site ' + session[:site_id] +" has been updated with new site" + new_host + "."
+      else
+        error = result["error"].nil? ? result["error_response"] : result["error"]
+        session[:error] = 'Failed to update host ' + error
+      end
+    end
+    if ! new_email.empty?
+      uri = URI.parse(YOTTAA_API_URL_PARTNER + "/accounts/" + session[:user_id] + "/update_email?new_email=" + new_email)
+      https = https_connection(uri)
+      req = Net::HTTP::Put.new(uri, {CaseSensitiveString.new("YOTTAA-API-KEY") =>session[:api_key]})
+      https.set_debug_output($stdout)
+      res = https.request(req)
+      result = JSON.parse(res.body)
+
+      if !(result.has_key? 'error_response') && !(result.has_key? 'error')
+        session[:message] = 'Account ' + session[:user_id] +" has been updated with new email " + new_host + "."
+      else
+        error = result["error"].nil? ? result["error_response"] : result["error"]
+        session[:error] = 'Failed to update email ' + error
+      end
+    end
+    session[:resource]   = get_resource
+    redirect '/'
+
+  end
 end

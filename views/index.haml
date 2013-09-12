@@ -41,8 +41,11 @@
           %tr
             %td <span class="setting-item-title">Host</span>
             %td
-              %input{:id=>"yottaa_host", :name=>"yottaa_host", :size=>"60", :value=>"#{@yottaa_host}"}
-              %input{:id=>"app_domain", :type=>"button", :value=>"Switch to app domain", :onclick=>"document.getElementById('yottaa_host').value='#{@app_domain}';return false;"}
+              -if @deferred_host
+                %input{:id=>"yottaa_host", :name=>"yottaa_host", :size=>"60", :value=>""}
+                %input{:id=>"app_domain", :type=>"button", :value=>"Switch to app domain", :onclick=>"document.getElementById('yottaa_host').value='#{@app_domain}';return false;"}
+              -else
+                %td #{@yottaa_host}
           %tr
             %td <span class="setting-item-title">Email</span>
             %td
@@ -50,7 +53,8 @@
               %input{:id=>"owner_email", :type=>"button", :value=>"Switch to owner email", :onclick=>"document.getElementById('yottaa_email').value='#{@email}';return false;"}
           %tr{:class=>"even"}
             %td{:colspan=>"2"}
-              %input{:id=>"update-submit", :class=>"form-submit", :type=>"submit", :value=>"Update", :name=>"action", :disabled=>"disabled"}
+              -if @deferred_host
+                %input{:id=>"update-submit", :class=>"form-submit", :type=>"submit", :value=>"Update", :name=>"action", :disabled=>"disabled"}
             %td
       %h2 Links
       %div
