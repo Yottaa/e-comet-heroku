@@ -111,7 +111,7 @@
                   %td
                     Activating your site allows all e-commerce visitors to receive the benefits out Yottaa's site speed optimizer.
         -else
-        %h3 Other Actions
+        %h3 Flush Cache
         %form{:id=>"yottaa-optimizer-flush-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/flush"}
           %div
             %table.others
@@ -121,6 +121,7 @@
               %tr{:class=>"odd"}
                 %td
                   %input{:id=>"edit-submit", :class=>"form-submit", :type=>"submit", :value=>"Flush Cache", :name=>"action"}
+        %h3 Purge Cache
         %form{:id=>"yottaa-optimizer-purge-form", 'accept-charset'=>"UTF-8", :method=>"post", :action=>"/purge"}
           %div
             %table

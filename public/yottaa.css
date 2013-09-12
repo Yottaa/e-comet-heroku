@@ -90,10 +90,20 @@ input.form-submit, a.button {
     text-align: center;
 }
 
+input.form-submit:hover, a.button:hover {
+    background: none repeat scroll 0 0 #666666;
+    border-color: #555555;
+    color: #FFFFFF;
+    text-shadow: 0 -1px 0 #222222;
+    text-decoration: none;
+}
+
+/*
 a.button:link, a.button:visited, a.button:hover, a.button:active {
     color: #5A5A5A;
     text-decoration: none;
 }
+*/
 
 .dashboard {
     margin: 15px;
